@@ -1,4 +1,5 @@
 # SortCSS
+
 A small script useful if you have a lot of css-like files to sort. 
 *It works, but don't rely on it.*
 
