@@ -25,9 +25,9 @@ arg_parser.add_argument('-s', '--source', type=validate_filepath_arg, default=_W
                         help='''source directory where to look for targets. Default=script directory.''')
 arg_parser.add_argument('-d', '--output-dir', type=validate_filepath_arg, nargs='?', default=None, const=_OUTPUT_DIR_,
                         help='''output directory where to write sorted files. Default=original file location.''')
-arg_parser.add_argument('-t', '--target', type=Path, nargs='*',
+arg_parser.add_argument('-t', '--target', type=Path, nargs='*', default=[],
                         help='''target specific files or directories. Default=All files in --source but no directories.''')
-arg_parser.add_argument('-x', '--exclude', type=Path, nargs='*',
+arg_parser.add_argument('-x', '--exclude', type=Path, nargs='*', default=[],
                         help='''exclude specified files or directories. Default=None.''')
 arg_parser.add_argument('-p', '--prefix', nargs='?', default='', const=_FILE_PREFIX_,
                         help='''set the prefix for the sorted file name, if not set it will keep the original name. Default=\'%s\'.''' % _FILE_PREFIX_)
@@ -44,6 +44,7 @@ def validate_arguments():
     """
     One time utility used to validate arguments.
     """
+
     cmd_args.template = Path(cmd_args.template)
 
     if cmd_args.source:
@@ -90,7 +91,7 @@ def join_lists(separator: str, *args):
     return joined
 
 
-def expand_items(items: Union[Path, List], recursive: bool = True):
+def find_css(items: Union[Path, List], recursive: bool = True):
     """
     Utility used to find all files with a valid extension (see _TARGET_EXTENSIONS_) inside the specified path, by default
     it looks recursively into directories.
@@ -107,7 +108,7 @@ def expand_items(items: Union[Path, List], recursive: bool = True):
             if item.is_file() and item.suffix in _TARGET_EXTENSIONS_:
                 all_items.append(item)
             elif item.is_dir():
-                all_items.extend(expand_items(item, recursive))
+                all_items.extend(find_css(item, recursive))
 
     elif items.is_file() and items.suffix in _TARGET_EXTENSIONS_:
         all_items.append(items)
@@ -137,18 +138,16 @@ def startup():
     # Argument validation
     validate_arguments()
 
-    # Convert targets and exclusions in useful list of files
+    # Convert targets and exclusions into a useful list of files
     if cmd_args.exclude:
-        cmd_args.exclude = expand_items(cmd_args.exclude)
-    else:
-        cmd_args.exclude = []
+        cmd_args.exclude = find_css(cmd_args.exclude)
 
     if cmd_args.target:  # If user specified targets look into them
-        cmd_args.target = [m_target for m_target in expand_items(cmd_args.target, cmd_args.recursive) if
+        cmd_args.target = [m_target for m_target in find_css(cmd_args.target, cmd_args.recursive) if
                            m_target not in cmd_args.exclude]
     else:
         try:  # If user didn't specify targets find all valid files in the source directory, recursion depends on --recursive
-            cmd_args.target = [m_target for m_target in expand_items(cmd_args.source, recursive=cmd_args.recursive) if
+            cmd_args.target = [m_target for m_target in find_css(cmd_args.source, recursive=cmd_args.recursive) if
                                m_target not in cmd_args.exclude]
         except TypeError:
             raise TypeError("No valid targets found, current supported extensions are {}".format(
@@ -315,7 +314,7 @@ class CssTarget:
         """
         Loads a file into an existing CssTarget by re-initializing it with the new file.
         :param file: new target file
-        :return: self
+        :return: updated self
         """
 
         self.__init__(file)
