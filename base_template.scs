@@ -8,7 +8,8 @@
 #
 #
 # This file is used by SortCSS.py to define the hierarchy of CSS attributes.
-# If you wish to edit this file please adhere to the following template and rules otherwise things will get messy, files may be overwritten, lost or corrupted.
+# If you wish to edit this file please adhere to the following template and rules otherwise things will get messy,
+# files may be overwritten, lost or corrupted.
 #
 # TEMPLATE:
 # [ Section Title]
