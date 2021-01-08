@@ -10,7 +10,7 @@
 # This file is used by SortCSS.py to define the hierarchy of CSS attributes.
 # If you wish to edit this file please adhere to the following template and rules otherwise unexpected behaviour may occur.
 #
-# This template has been tested up to SortCSS v2.1.
+# This template has been tested up to SortCSS v1.0.1.
 #
 # TEMPLATE:
 # [ Section Title]
