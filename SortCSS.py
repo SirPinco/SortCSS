@@ -8,7 +8,7 @@ from pathvalidate.argparse import validate_filepath_arg
 
 _WORK_DIR_ = Path(__file__).parent
 _OUTPUT_DIR_ = _WORK_DIR_ / 'sorted'
-_SCRIPT_NAME_ = 'SortCSS'  # DO NOT CHANGE THIS, see CssTarget.sort()
+_SCRIPT_NAME_ = 'SortCSS'  # DO NOT CHANGE THIS,see CssTarget.sort()
 _VERSION_ = 'v2.0'
 _FILE_PREFIX_ = 'sorted_'
 _TARGET_EXTENSIONS_ = ['.css', '.scss']
@@ -25,9 +25,9 @@ arg_parser.add_argument('-s', '--source', type=validate_filepath_arg, default=_W
                         help='''source directory where to look for targets. Default=script directory.''')
 arg_parser.add_argument('-d', '--output-dir', type=validate_filepath_arg, nargs='?', default=None, const=_OUTPUT_DIR_,
                         help='''output directory where to write sorted files. Default=original file location.''')
-arg_parser.add_argument('-t', '--target', type=Path, nargs='*',
+arg_parser.add_argument('-t', '--target', type=Path, nargs='*', default=[],
                         help='''target specific files or directories. Default=All files in --source but no directories.''')
-arg_parser.add_argument('-x', '--exclude', type=Path, nargs='*',
+arg_parser.add_argument('-x', '--exclude', type=Path, nargs='*', default=[],
                         help='''exclude specified files or directories. Default=None.''')
 arg_parser.add_argument('-p', '--prefix', nargs='?', default='', const=_FILE_PREFIX_,
                         help='''set the prefix for the sorted file name, if not set it will keep the original name. Default=\'%s\'.''' % _FILE_PREFIX_)
@@ -42,8 +42,9 @@ cmd_args = arg_parser.parse_args()
 
 def validate_arguments():
     """
-    One time utility used to validate arguments.
+    One time utility used to group argument validation.
     """
+
     cmd_args.template = Path(cmd_args.template)
 
     if cmd_args.source:
@@ -124,7 +125,8 @@ def expand_items(items: Union[Path, List], recursive: bool = True):
 
 def startup():
     """
-    Utility to make the script cleaner since we want to keep everything in a single file.
+    One time utility for startup duties such as validating arguments and gathering targets.
+    It's a function for the sole purpose of making the script cleaner since we want to keep everything in a single file.
     """
 
     # Print pretty arguments
@@ -140,8 +142,6 @@ def startup():
     # Convert targets and exclusions in useful list of files
     if cmd_args.exclude:
         cmd_args.exclude = expand_items(cmd_args.exclude)
-    else:
-        cmd_args.exclude = []
 
     if cmd_args.target:  # If user specified targets look into them
         cmd_args.target = [m_target for m_target in expand_items(cmd_args.target, cmd_args.recursive) if
