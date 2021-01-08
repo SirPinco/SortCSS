@@ -9,7 +9,7 @@ from pathvalidate.argparse import validate_filepath_arg
 _WORK_DIR_ = Path(__file__).parent
 _OUTPUT_DIR_ = _WORK_DIR_ / 'sorted'
 _SCRIPT_NAME_ = 'SortCSS'  # DO NOT CHANGE THIS, see CssTarget.sort()
-_VERSION_ = 'v2.0'
+_VERSION_ = 'v2.1'
 _FILE_PREFIX_ = 'sorted_'
 _TARGET_EXTENSIONS_ = ['.css', '.scss']
 _TEMPLATE_EXTENSION_ = '.scs'

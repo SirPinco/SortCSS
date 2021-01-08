@@ -1,4 +1,4 @@
-# SortCSS
+# SortCSS <sub><sup>v2.1</sup></sub>
 A small script useful if you have a lot of css-like files to sort. 
 *It works, but don't rely on it.*
 
@@ -28,9 +28,6 @@ applying it to original file.
 
 > **BEWARE:** when using `--output-dir` you are writing all files into the same directory which means that if you have 
 > targets with the same name but in different directories they will conflict with each other. [#1][i1]
-
-> **BEWARE:** as of version `v2.0`, `--source` and `--target` don't work together, `--target` paths are not relative to 
-> `--source`. [#2][i2]
 
 ## Template guidelines
 1. The section title enclosed in brackets must not have an empty line under it, the attribute list must follow it immediately.
