@@ -1,15 +1,19 @@
-# SortCSS <sub><sup>v1.0.1</sup></sub>
+# SortCSS
+![shield-latest-release] ![shield-license]
+
 A small script useful if you have a lot of css-like files to sort. 
-*It works, but don't rely on it.*
 
 The sorting is done by following a template with a specific format (see [Template Guidelines](#template-guidelines)) and
 applying it to original file.
 
 ## Features
+- **Template based:** Define your own template and sort attributes according to your preference.
 - **Bulk targets:** Target specific files or whole directories, the script will search for valid files on its own. Recursion is supported.
 - **Exclusions:** Exclude specific files or whole directories from the search.
 - **Prefix:** Define a filename prefix for the newly sorted files.
 - **Force overwrite:** If you blindly trust this script you can choose to sort the files in place by overwriting the original with the sorted copy.
+
+*It works, but don't rely on it.*
 
 ## Arguments
 | flag                      | description                                                  | default (no flag)                                            | default (flag only)                                          |
@@ -36,7 +40,7 @@ applying it to original file.
    - *Attributes are indexed in descending order (`first-attribute=0, ..., nth-attribute=N`).*
 4. The file extension for a template is `.scs`.
 
-Pseudo template:
+**Pseudo template:**
 ```
 # Comment, lorem ipsum dolor sit amet
 
@@ -56,18 +60,21 @@ attributeN+M                description
 ...
 ```
 
-A template is included in the project files: [base_template.scs](https://github.com/SirPinco/SortCSS/blob/master/base_template.scs)
+A template is included in the project files: [base_template.scs][base-template]
 
-## Roadmap ✖ `v1.0.1`
+## Roadmap ![shield-latest-release]:
 - [X] [#2][i2] - `--source` doesn't influence target search if used with `--target`.
 - [X] [#3][i3] - `list.append()` and `list.extend()` are being used interchangeably.
 - [X] [#4][i4] - Private/member variables should have an identifying prefix to avoid conflicts.
 
-## Roadmap ✖ `v2.0.0`
+## Roadmap <sub><sup>✖</sup></sub> <img src="https://img.shields.io/badge/release-v2.0.0-blue?style=flat-square" alt="next-major">
 - [ ] [#6][i6] - The `block` concept should be a class.
 
+[base-template]:https://github.com/SirPinco/SortCSS/blob/master/base_template.scs
 [i1]: https://github.com/SirPinco/SortCSS/issues/1
 [i2]: https://github.com/SirPinco/SortCSS/issues/2
 [i3]: https://github.com/SirPinco/SortCSS/issues/3
 [i4]: https://github.com/SirPinco/SortCSS/issues/4
 [i6]: https://github.com/SirPinco/SortCSS/issues/6
+[shield-latest-release]: https://img.shields.io/github/v/release/SirPinco/SortCSS?style=flat-square
+[shield-license]: https://img.shields.io/github/license/SirPinco/SortCSS?style=flat-square
