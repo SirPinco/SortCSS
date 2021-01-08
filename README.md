@@ -61,10 +61,12 @@ attributeN+M                description
 
 A template is included in the project files: [base_template.scs](https://github.com/SirPinco/SortCSS/blob/master/base_template.scs)
 
-## Roadmap x `v2.5`
-- [ ] [#2][i2] - `--source` doesn't influence target search if used with `--target`.
-- [ ] [#3][i3] - `list.append()` and `list.extend()` are being used interchangeably.
-- [ ] [#4][i4] - Private/member variables should have an identifying prefix to avoid conflicts.
+## Roadmap ✖ `v2.1`
+- [X] [#2][i2] - `--source` doesn't influence target search if used with `--target`.
+- [X] [#3][i3] - `list.append()` and `list.extend()` are being used interchangeably.
+- [X] [#4][i4] - Private/member variables should have an identifying prefix to avoid conflicts.
+
+## Roadmap ✖ `v2.5`
 - [ ] [#6][i6] - Block should be a class.
 
 [i1]: https://github.com/SirPinco/SortCSS/issues/1

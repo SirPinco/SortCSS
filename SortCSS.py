@@ -8,7 +8,7 @@ from pathvalidate.argparse import validate_filepath_arg
 
 _WORK_DIR_ = Path(__file__).parent
 _OUTPUT_DIR_ = _WORK_DIR_ / 'sorted'
-_SCRIPT_NAME_ = 'SortCSS'  # DO NOT CHANGE THIS,see CssTarget.sort()
+_SCRIPT_NAME_ = 'SortCSS'  # DO NOT CHANGE THIS, see CssTarget.sort()
 _VERSION_ = 'v2.0'
 _FILE_PREFIX_ = 'sorted_'
 _TARGET_EXTENSIONS_ = ['.css', '.scss']
@@ -80,15 +80,18 @@ def join_lists(separator: str, *args):
     :return: joined lists
     """
 
-    joined = []
+    m_joined = []
 
     for m_list in args:
         if m_list:
-            joined.extend(m_list)
-            joined.extend(separator)
-    joined.pop()
+            m_joined.extend(m_list)
 
-    return joined
+            # Could be .append() but since we are joining lists I prefer returning list[list] only,
+            # instead of list[Union[list, str]]
+            m_joined.extend(separator)
+    m_joined.pop()
+
+    return m_joined
 
 
 def expand_items(items: Union[Path, List], recursive: bool = True):
@@ -101,26 +104,26 @@ def expand_items(items: Union[Path, List], recursive: bool = True):
     :return: list of files
     """
 
-    all_items = []
+    m_all_items = []
 
     if type(items) is list:
         for item in items:
             if item.is_file() and item.suffix in _TARGET_EXTENSIONS_:
-                all_items.append(item)
+                m_all_items.append(item)
             elif item.is_dir():
-                all_items.extend(expand_items(item, recursive))
+                m_all_items.extend(expand_items(item, recursive))
 
     elif items.is_file() and items.suffix in _TARGET_EXTENSIONS_:
-        all_items.append(items)
+        m_all_items.append(items)
 
     elif items.is_dir():
         for extension in _TARGET_EXTENSIONS_:
             if recursive:
-                all_items.extend([m_target for m_target in items.rglob('*' + extension)])
+                m_all_items.extend([m_target for m_target in items.rglob('*' + extension)])
             else:
-                all_items.extend([m_target for m_target in items.glob('*' + extension)])
+                m_all_items.extend([m_target for m_target in items.glob('*' + extension)])
 
-    return all_items
+    return m_all_items
 
 
 def startup():
@@ -130,22 +133,38 @@ def startup():
     """
 
     # Print pretty arguments
-    arg_list = []
+    m_arg_list = []
     for arg in vars(cmd_args):
-        arg_list.append(arg + '=' + repr(getattr(cmd_args, arg)))
+        m_arg_list.append(arg + '=' + repr(getattr(cmd_args, arg)))
     print("Launched %s with args: [%s]" % (_SCRIPT_NAME_ + ' ' + _VERSION_,
-                                           ', '.join(arg_list)))
+                                           ', '.join(m_arg_list)))
 
     # Argument validation
     validate_arguments()
 
     # Convert targets and exclusions in useful list of files
     if cmd_args.exclude:
-        cmd_args.exclude = expand_items(cmd_args.exclude)
+        m_exclude = []
+
+        for x in expand_items(cmd_args.exclude, cmd_args.recursive):
+            if x.is_absolute():
+                m_exclude.append(x)
+            else:
+                m_exclude.append(cmd_args.source / x)
+
+        cmd_args.exclude = m_exclude
 
     if cmd_args.target:  # If user specified targets look into them
-        cmd_args.target = [m_target for m_target in expand_items(cmd_args.target, cmd_args.recursive) if
-                           m_target not in cmd_args.exclude]
+        m_target = []
+
+        for t in expand_items(cmd_args.target, cmd_args.recursive):
+            if t.is_absolute():
+                m_target.append(t)
+            else:
+                m_target.append(cmd_args.source / t)
+
+        cmd_args.target = m_target
+
     else:
         try:  # If user didn't specify targets find all valid files in the source directory, recursion depends on --recursive
             cmd_args.target = [m_target for m_target in expand_items(cmd_args.source, recursive=cmd_args.recursive) if
@@ -195,7 +214,7 @@ class CssTemplate:
         :return: dictionary { section_titles:[attributes, ...], ... }
         """
 
-        template = {}
+        m_template = {}
         with self.path.open('r') as template_file:
             for line in template_file:
                 section_title = re.search(r'(?<=\[ ).*?(?= ])', line)
@@ -210,9 +229,9 @@ class CssTemplate:
                         attribute_list.append(line.split(' ', 1)[0].strip())
                         line = template_file.readline()
 
-                    template[section_title.group()] = attribute_list
+                    m_template[section_title.group()] = attribute_list
 
-        return template
+        return m_template
 
     def __set_indexes(self):
         """
@@ -221,14 +240,14 @@ class CssTemplate:
         :return: dictionary {attribute1: 0, ..., attributeN: n-1}
         """
 
-        index = 0
-        indexed_template = {}
+        m_index = 0
+        m_indexed_template = {}
         for _, attributes in self.__parse().items():
             for attribute in attributes:
-                indexed_template[attribute] = index
-                index += 1
+                m_indexed_template[attribute] = m_index
+                m_index += 1
 
-        return indexed_template
+        return m_indexed_template
 
     def __repr__(self):
         return repr(self.template)
@@ -267,19 +286,19 @@ class CssTarget:
             raw_data = self.__raw
 
         m_index = line_index + 1
-        block = [raw_data[line_index]]
+        m_block = [raw_data[line_index]]
 
         while m_index < len(raw_data):
             # Check if the line is the start of a block by looking for non balanced open braces
             if raw_data[m_index].count('{') > raw_data[m_index].count('}'):
                 child, m_index = self.read_block(raw_data, m_index)  # Read the child
-                block.append(child)
+                m_block.append(child)
             # Check if the line is the end of a block by looking for non balanced closed braces
             elif raw_data[m_index].count('}') > raw_data[m_index].count('{'):
-                block.append(raw_data[m_index])
-                return block, m_index
+                m_block.append(raw_data[m_index])
+                return m_block, m_index
             else:
-                block.append(raw_data[m_index])  # This is where we append the actual normal content of the block
+                m_block.append(raw_data[m_index])  # This is where we append the actual normal content of the block
 
             m_index += 1
 
@@ -292,24 +311,24 @@ class CssTarget:
         :return: list of lines with each block collapsed into one item
         """
 
-        index = 0
-        condensed = []
+        m_index = 0
+        m_condensed = []
 
         with self.path.open('r') as target_file:
             self.__raw = target_file.readlines()  # Files will never be so big that memory runs out
 
-        while index < len(self.__raw):  # Until EOF
+        while m_index < len(self.__raw):  # Until EOF
             # Check if the line is the start of a block by looking for non balanced open braces
-            if self.__raw[index].count('{') > self.__raw[index].count('}'):
-                block, index = self.read_block(self.__raw, index)
-                condensed.append(block)
+            if self.__raw[m_index].count('{') > self.__raw[m_index].count('}'):
+                block, m_index = self.read_block(self.__raw, m_index)
+                m_condensed.append(block)
             else:
                 # This is where we read comments and non-block lines to keep the same overall format of the original file
-                condensed.append(self.__raw[index])
+                m_condensed.append(self.__raw[m_index])
 
-            index += 1
+            m_index += 1
 
-        return condensed
+        return m_condensed
 
     def load(self, file: Path):
         """
@@ -341,19 +360,19 @@ class CssTarget:
         :return: list of lines, sorted block
         """
 
-        selector = []
-        attributes = [None] * len(template.template)
-        extras = []
-        children = []
-        end = None
+        m_selector = []
+        m_attributes = [None] * len(template.template)
+        m_extras = []
+        m_children = []
+        m_end = None
 
         for item in block:
             if type(item) is str:
                 if item.count('}') > item.count('{'):
-                    end = [item]
+                    m_end = [item]
                     break
                 elif item.count('{') > item.count('}'):  # May be used in the future to sort selectors as well
-                    selector = [item]
+                    m_selector = [item]
                 else:
                     # Sorting happens here
                     key = item.split(':')[0].strip().strip('//')
@@ -363,18 +382,26 @@ class CssTarget:
                     elif key in template.template.keys():  # If attribute is in template
                         # Workaround, compiler expects attributes to be list[str] but it may also
                         # be list[Union[list[str], str]]
-                        attributes[template.template[key]] = item if not attributes[template.template[key]] else [
-                            attributes[template.template[key]], item]
+                        m_attributes[template.template[key]] = item if not m_attributes[template.template[key]] else [
+                            m_attributes[template.template[key]], item]
                     else:
-                        extras.append(item)  # If not an attribute
+                        m_extras.append(item)  # If not an attribute
 
             elif type(item) is list:
-                children.append(self.sort_block(item, template))
+                m_children.append(self.sort_block(item, template))
 
         # Remove all None items from dummy template effectively creating the sorted list of attributes
-        attributes = [item for item in attributes if item is not None]
+        m_attributes = [item for item in m_attributes if item is not None]
 
-        return selector + join_lists('\n', attributes, extras, children) + end
+        if len(m_children) > 1:
+            m_spaced_children = []
+            for child in m_children:
+                m_spaced_children.append(child)
+                m_spaced_children.append('\n')
+            m_spaced_children.pop()
+            m_children = m_spaced_children
+
+        return m_selector + join_lists('\n', m_attributes, m_extras, m_children) + m_end
 
     def sort(self, template: CssTemplate):
         """
@@ -385,19 +412,19 @@ class CssTarget:
         :return: list of lines, sorted and ready to be written to file
         """
 
-        sorted_raw = ['// %s %s\n' % (_SCRIPT_NAME_, _VERSION_)]
+        m_sorted_raw = ['// %s %s\n' % (_SCRIPT_NAME_, _VERSION_)]
 
         for item in self.condensed:
             if type(item) is list:
-                sorted_raw.append(self.sort_block(item, template))
+                m_sorted_raw.append(self.sort_block(item, template))
             else:
                 if type(item) is str and item.startswith('// %s v' % _SCRIPT_NAME_):
                     # Overwrite which version of the script sorted this file
                     continue
 
-                sorted_raw.append(item)
+                m_sorted_raw.append(item)
 
-        return sorted_raw
+        return m_sorted_raw
 
 
 class CssSorted:
@@ -417,15 +444,15 @@ class CssSorted:
         :return: list of pure lines only, no nesting
         """
 
-        expanded = []
+        m_expanded = []
 
         for item in block:
             if type(item) is str:
-                expanded.append(item)
+                m_expanded.append(item)
             elif type(item) is list:
-                expanded.extend(self.__expand_block(item))
+                m_expanded.extend(self.__expand_block(item))
 
-        return expanded
+        return m_expanded
 
     def __expand(self):
         """
@@ -435,12 +462,12 @@ class CssSorted:
         :return: fully expanded sorted CssTarget, no nesting
         """
 
-        expanded = []
+        m_expanded = []
 
         for item in self.sorted:
-            expanded.extend(self.__expand_block(item))
+            m_expanded.extend(self.__expand_block(item))
 
-        return expanded
+        return m_expanded
 
     def write(self, file: Path):
         """
