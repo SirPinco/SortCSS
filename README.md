@@ -67,7 +67,7 @@ A template is included in the project files: [base_template.scs][base-template]
 - [X] [#3][i3] - `list.append()` and `list.extend()` are being used interchangeably.
 - [X] [#4][i4] - Private/member variables should have an identifying prefix to avoid conflicts.
 
-## Roadmap [![GitHub release](https://img.shields.io/badge/release-v2.5.0-blue?style=flat-square)](https://github.com/SirPinco/SortCSS/milestone/2)
+## Roadmap [![GitHub release](https://img.shields.io/badge/release-v1.1.0-blue?style=flat-square)](https://github.com/SirPinco/SortCSS/milestone/2)
 - [ ] [#6][i6] - The `block` concept should be a class.
 
 [base-template]:https://github.com/SirPinco/SortCSS/blob/master/base_template.scs
