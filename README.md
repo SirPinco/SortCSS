@@ -1,5 +1,5 @@
 # SortCSS
-![shield-latest-release] ![shield-license]
+[![GitHub release][shield-latest-release]][repository-releases] [![GitHub license][shield-license]][repository-license]
 
 A small script useful if you have a lot of css-like files to sort. 
 
@@ -67,7 +67,7 @@ A template is included in the project files: [base_template.scs][base-template]
 - [X] [#3][i3] - `list.append()` and `list.extend()` are being used interchangeably.
 - [X] [#4][i4] - Private/member variables should have an identifying prefix to avoid conflicts.
 
-## Roadmap <sub><sup>✖</sup></sub> <img src="https://img.shields.io/badge/release-v2.0.0-blue?style=flat-square" alt="next-major">
+## Roadmap [![GitHub release](https://img.shields.io/badge/release-v2.5.0-blue?style=flat-square)](https://github.com/SirPinco/SortCSS/milestone/2)
 - [ ] [#6][i6] - The `block` concept should be a class.
 
 [base-template]:https://github.com/SirPinco/SortCSS/blob/master/base_template.scs
@@ -78,3 +78,5 @@ A template is included in the project files: [base_template.scs][base-template]
 [i6]: https://github.com/SirPinco/SortCSS/issues/6
 [shield-latest-release]: https://img.shields.io/github/v/release/SirPinco/SortCSS?style=flat-square
 [shield-license]: https://img.shields.io/github/license/SirPinco/SortCSS?style=flat-square
+[repository-license]: https://github.com/SirPinco/rhapsody/blob/master/LICENSE.md
+[repository-releases]:  https://github.com/SirPinco/rhapsody/releases
