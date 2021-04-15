@@ -78,5 +78,5 @@ A template is included in the project files: [base_template.scs][base-template]
 [i6]: https://github.com/SirPinco/SortCSS/issues/6
 [shield-latest-release]: https://img.shields.io/github/v/release/SirPinco/SortCSS?style=flat-square
 [shield-license]: https://img.shields.io/github/license/SirPinco/SortCSS?style=flat-square
-[repository-license]: https://github.com/SirPinco/rhapsody/blob/master/LICENSE.md
-[repository-releases]:  https://github.com/SirPinco/rhapsody/releases
+[repository-license]: https://github.com/SirPinco/SortCSS/blob/master/LICENSE.md
+[repository-releases]:  https://github.com/SirPinco/SortCSS/releases
